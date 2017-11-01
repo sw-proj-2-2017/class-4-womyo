@@ -20,51 +20,83 @@ class ScoreDB(QWidget):
         
     def initUI(self):
 
-        label1 = QLabel("Name: ", self)
-        label1.move(10, 16)
-        label2 = QLabel("Age: ", self)
-        label2.move(170, 16)
-        label3 = QLabel("Score: ", self)
-        label3.move(320, 16)
-        label4 = QLabel("Amount: ", self)
-        label4.move(195, 46)
-        label5 = QLabel("Key: ", self)
-        label5.move(375, 46)
-        label6 = QLabel("Result:", self)
-        label6.move(10, 103)
-        line1 = QLineEdit("", self)
-        line1.move(50, 13)
-        line2 = QLineEdit("", self)
-        line2.move(200, 13)
-        line3 = QLineEdit("", self)
-        line3.move(360, 13)
-        line4 = QLineEdit("", self)
-        line4.move(250, 43)
-        c = QComboBox(self)
-        c.addItem("Name", self)
-        c.addItem("Age", self)
-        c.addItem("Score", self)
-        c.move(405, 43)
-        b1 = QPushButton("Add", self)
-        b1.move(50, 73)
-        b2 = QPushButton("Del", self)
-        b2.move(135, 73)
-        b3 = QPushButton("Find", self)
-        b3.move(220, 73)
-        b4 = QPushButton("Inc", self)
-        b4.move(305, 73)
-        b5 = QPushButton("show", self)
-        b5.move(390, 73)
-        text = QTextEdit(self)
-        text.move(10, 123)
-        text.resize(460, 120)
+        label1 = QLabel("Name:")
+        label2 = QLabel("Age:")
+        label3 = QLabel("Score:")
+        label4 = QLabel("Amount:")
+        label5 = QLabel("Key:")
+        self.result = QLabel("Result:")
+
+        line1 = QLineEdit()
+        line2 = QLineEdit()
+        line3 = QLineEdit()
+        line4 = QLineEdit()
+        self.resultEdit = QTextEdit()
+
+        self.c = QComboBox(self)
+        self.c.addItem("Name")
+        self.c.addItem("Age")
+        self.c.addItem("Score")
+        self.c.activated[str].connect(self.onActivated)
+
+        b1 = QPushButton("Add")
+        b2 = QPushButton("Del")
+        b3 = QPushButton("Find")
+        b4 = QPushButton("Inc")
+        b5 = QPushButton("show")
+
+        line1.textChanged[str].connect(self.onNameChanged)
+        line2.textChanged[str].connect(self.onAgeChanged)
+        line3.textChanged[str].connect(self.onScoreChanged)
+        line4.textChanged[str].connect(self.onAmountChanged)
+
+        b1.clicked.connect(self.AddClicked)
+        b2.clicked.connect(self.DelClicked)
+        b3.clicked.connect(self.FindClicked)
+        b4.clicked.connect(self.IncClicked)
+        b5.clicked.connect(self.showScoreDB)
+
+        hbox1 = QHBoxLayout()
+        hbox1.addWidget(label1)
+        hbox1.addWidget(line1)
+        hbox1.addWidget(label2)
+        hbox1.addWidget(line2)
+        hbox1.addWidget(label3)
+        hbox1.addWidget(line3)
+
+        hbox2 = QHBoxLayout()
+        hbox2.addStretch(1)
+        hbox2.addWidget(label4)
+        hbox2.addWidget(line4)
+        hbox2.addWidget(label5)
+        hbox2.addWidget(self.c)
+
+        hbox3 = QHBoxLayout()
+        hbox3.addStretch(1)
+        hbox3.addWidget(b1)
+        hbox3.addWidget(b2)
+        hbox3.addWidget(b3)
+        hbox3.addWidget(b4)
+        hbox3.addWidget(b5)
+
+        hbox4 = QHBoxLayout()
+        hbox4.addWidget(self.result)
+
+        hbox5 = QHBoxLayout()
+        hbox5.addWidget(self.resultEdit)
+
+        vbox = QVBoxLayout()
+        vbox.addLayout(hbox1)
+        vbox.addLayout(hbox2)
+        vbox.addLayout(hbox3)
+        vbox.addLayout(hbox4)
+        vbox.addLayout(hbox5)
+        self.setLayout(vbox)
+        self.show()
 
         self.setGeometry(300, 300, 480, 250)
         self.setWindowTitle('Assignment6')    
-        self.show()
-
-
-
+        self.str = ""
 
 
     def closeEvent(self, event):
@@ -94,8 +126,47 @@ class ScoreDB(QWidget):
         fH.close()
 
     def showScoreDB(self):
+        keyname = self.c.currentText()
+        for p in sorted(self.scoredb, key=lambda person: person[keyname]):
+            for attr in sorted(p):
+                self.str += attr + "=" + str(p[attr]) + '\t'
+            self.str += "\n"
+        self.resultEdit.setText(self.str)
+        self.str = ""
         pass
-        
+    def onNameChanged(self, text):
+        self.name = text
+
+    def onAgeChanged(self, text):
+        self.age = text
+    def onScoreChanged(self, text):
+        self.score = text
+    def onAmountChanged(self, text):
+        self.amount = text
+    def AddClicked(self):
+        record = {'Name': self.name, 'Age': int(self.age), 'Score': int(self.score)}
+        self.scoredb += [record]
+        self.showScoreDB()
+    def DelClicked(self):
+        copyscoredb = self.scoredb[:]
+        for p in copyscoredb:
+            if p['Name'] == self.name:
+                self.scoredb.remove(p)
+        self.showScoreDB()
+    def FindClicked(self):
+        for p in self.scoredb:
+            if p['Name'] == self.name:
+                self.str += "Age=" + str(p['Age']) + "\tName=" + str(p['Name']) + "\t\tScore=" + str(p['Score'])
+                self.str += "\n"
+        self.resultEdit.setText(self.str)
+        self.str = ""
+    def IncClicked(self):
+        for p in self.scoredb:
+            if p['Name'] == self.name:
+                p['Score'] += int(self.amount)
+        self.showScoreDB()
+    def onActivated(self, text):
+        self.keyname = text
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
