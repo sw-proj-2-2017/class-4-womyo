@@ -38,7 +38,7 @@ class Calculator(QWidget):
         # Digit Buttons
         self.digitButton = [x for x in range(0, 10)]
         for i in range(10):
-            self.digitButton[i] = Button("%d" % i, self.buttonClicked)
+            self.digitButton[i] = Button("%d" % (i), self.buttonClicked)
         
         # . and = Buttons
         self.decButton = Button('.', self.buttonClicked)
@@ -94,9 +94,9 @@ class Calculator(QWidget):
         self.setWindowTitle("My Calculator")
 
     def buttonClicked(self):
+        button = self.sender()
+        key = button.text()
         try:
-            button = self.sender()
-            key = button.text()
             if key == '=':
                 result = str(eval(self.display.text()))
                 self.display.setText(result)
@@ -109,7 +109,7 @@ class Calculator(QWidget):
         except TypeError:
             self.display.setText("Type Error!")
         except ZeroDivisionError:
-            self.display.setText("ZeroDivision Error!")
+            self.display.setText("Division Error!")
 
 
 if __name__ == '__main__':
