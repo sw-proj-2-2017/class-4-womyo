@@ -91,22 +91,14 @@ class Calculator(QWidget):
         elif key in constantList:
             for i in range(4):
                 if key == constantList[i]:
-                    self.display.setText(self.display.text()+list(constantList.values())[i])
+                    self.display.setText(self.display.text + constantList[key])
         elif key == functionList[0]:
             n = self.display.text()
             value = fact(int(n))
             self.display.setText(str(value))
-        elif key == functionList[1]:
+        elif key in functionList:
             n = self.display.text()
-            value = calcFunctions.decToBin(n)
-            self.display.setText(str(value))
-        elif key == functionList[2]:
-            n = self.display.text()
-            value = calcFunctions.binToDec(n)
-            self.display.setText(str(value))
-        elif key == functionList[3]:
-            n = self.display.text()
-            value = calcFunctions.decToRoman(n)
+            value = functionList[key](n)
             self.display.setText(str(value))
         else:
             self.display.setText(self.display.text() + key)
