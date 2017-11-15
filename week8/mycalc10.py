@@ -4,9 +4,8 @@ from PyQt5.QtWidgets import QLineEdit, QToolButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QLayout, QGridLayout
 
-from keypad import numPadList, operatorList, constantList, functionList
+from keypad import numPadList, operatorList, constantDict, functionDict
 import calcFunctions
-from factorial import *
 
 class Button(QToolButton):
 
@@ -43,8 +42,8 @@ class Calculator(QWidget):
         buttonGroups = {
             'num': {'buttons': numPadList, 'layout': numLayout, 'columns': 3},
             'op': {'buttons': operatorList, 'layout': opLayout, 'columns': 2},
-            'constants': {'buttons': constantList, 'layout': constLayout, 'columns': 1},
-            'functions': {'buttons': functionList, 'layout': funcLayout, 'columns': 1},
+            'constants': {'buttons': constantDict, 'layout': constLayout, 'columns': 1},
+            'functions': {'buttons': functionDict, 'layout': funcLayout, 'columns': 1},
         }
 
         for label in buttonGroups.keys():
@@ -88,18 +87,15 @@ class Calculator(QWidget):
             self.display.setText(result)
         elif key == 'C':
             self.display.clear()
-        elif key in constantList:
-            for i in range(4):
-                if key == constantList[i]:
-                    self.display.setText(self.display.text + constantList[key])
-        elif key == functionList[0]:
-            n = self.display.text()
-            value = fact(int(n))
-            self.display.setText(str(value))
-        elif key in functionList:
-            n = self.display.text()
-            value = functionList[key](n)
-            self.display.setText(str(value))
+        elif key in constantDict:
+            self.display.setText(self.display.text() + constantDict[key])
+        elif key in functionDict:
+            try:
+                n = self.display.text()
+                value = functionDict[key](n)
+                self.display.setText(str(value))
+            except:
+                print('Error!')
         else:
             self.display.setText(self.display.text() + key)
 
