@@ -4,7 +4,7 @@ class Guess:
     
         self.secretWord = word
         self.currentStatus = '_' * len(word)
-        self.guessedChars = {'e', 'n'}
+        self.guessedChars = {'e'}
         self.guess('')
 
 
