@@ -105,37 +105,40 @@ class HangmanGame(QWidget):
         self.message.clear()
 
         if self.gameOver == True:
+            # 메시지 출력하고 - message.setText() - 리턴
             self.message.setText('game over')
 
-            # 메시지 출력하고 - message.setText() - 리턴
+        # 입력의 길이가 1 인지를 판단하고, 아닌 경우 메시지 출력, 리턴
         if len(guessedChar) != 1:
             self.message.setText('One character at a time! ')
-        # 입력의 길이가 1 인지를 판단하고, 아닌 경우 메시지 출력, 리턴
+
+        # 이미 사용한 글자인지를 판단하고, 아닌 경우 메시지 출력, 리턴
         if guessedChar in self.guess.guessedChars:
             self.message.setText('You already guessed \"' + guessedChar + '\"')
-        # 이미 사용한 글자인지를 판단하고, 아닌 경우 메시지 출력, 리턴
 
         success = self.guess.guess(guessedChar)
         if success == False:
-            self.hangman.decreaseLife()
-            self.message.setTest('decrease')
             # 남아 있는 목숨을 1 만큼 감소
-            # 메시지 출력
-        self.hangmanWindow.setPlaceholderText(self.hangman.currentShape())
-        self.currentWord.setText(self.guess.displayCurrent())
-        self.guessedChars.setText(self.guess.displayGuessed())
+            self.hangman.decreaseLife()
+
         # hangmanWindow 에 현재 hangman 상태 그림을 출력
+        self.hangmanWindow.setPlaceholderText(self.hangman.currentShape())
+
         # currentWord 에 현재까지 부분적으로 맞추어진 단어 상태를 출력
+        self.currentWord.setText(self.guess.displayCurrent())
+
         # guessedChars 에 지금까지 이용한 글자들의 집합을 출력
+        self.guessedChars.setText(self.guess.displayGuessed())
 
         if self.guess.finished():
+            # 메시지 ("Success!") 출력하고, self.gameOver 는 True 로
             self.message.setText('Success!')
             self.gameOver == True
-            # 메시지 ("Success!") 출력하고, self.gameOver 는 True 로
         elif self.hangman.getRemainingLives() == 0:
+            # 메시지 ("Fail!" + 비밀 단어) 출력하고, self.gameOver 는 True 로
             self.message.setText('Fail! ' + self.guess.secretWord)
             self.gameOver == True
-            # 메시지 ("Fail!" + 비밀 단어) 출력하고, self.gameOver 는 True 로
+
 
 
 if __name__ == '__main__':
